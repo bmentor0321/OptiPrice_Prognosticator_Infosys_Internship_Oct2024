@@ -4,9 +4,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import LabelEncoder
 from constants import DATASET_PATH, FEATURES_TO_SCALE, TARGET_VARIABLE
 
-
-def load_and_preprocess_data(DATASET_PATH):
-    df = pd.read_csv(DATASET_PATH)
+def load_and_preprocess_data(filepath):
+    df = pd.read_csv(filepath)
 
     # Selecting numerical features only
     X = df.select_dtypes(include=['float64', 'int64']).drop(columns=[TARGET_VARIABLE])
@@ -18,7 +17,7 @@ def load_and_preprocess_data(DATASET_PATH):
 
     # Feature scaling for selected columns
     scaler = StandardScaler()
-    numerical_features = [FEATURES_TO_SCALE]
+    numerical_features = FEATURES_TO_SCALE
     X_train[numerical_features] = scaler.fit_transform(X_train[numerical_features])
     X_val[numerical_features] = scaler.transform(X_val[numerical_features])
     X_test[numerical_features] = scaler.transform(X_test[numerical_features])

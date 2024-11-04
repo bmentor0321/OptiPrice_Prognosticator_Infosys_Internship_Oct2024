@@ -14,6 +14,6 @@ def test_model(model, X_test, y_test):
     results['Error'] = results[TARGET_VARIABLE] - results['Predicted_Cost_of_Ride']
 
     # Save results to CSV
-    results.to_csv('OptiPrice_Prognosticator_Infosys_Internship_Oct2024\\Dataset\\test_results_with_error.csv', index=False)
+    results.to_csv('C:/Users/viroc/Documents/Infosys Springboard Internship/Project/OptiPrice_Prognosticator_Infosys_Internship_Oct2024/Dataset/test_results_with_error.csv', index=False)
 
     return test_error
