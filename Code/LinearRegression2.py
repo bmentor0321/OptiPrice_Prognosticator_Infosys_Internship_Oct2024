@@ -67,6 +67,10 @@ X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, r
 # Train the model
 model = LinearRegression()
 model.fit(X_train, y_train)
+y_train_pred = model.predict(X_train)
+train_mae = mean_absolute_error(y_train, y_train_pred)
+train_mse = mean_squared_error(y_train, y_train_pred)
+print(f"Training MAE: {train_mae}, Training MSE: {train_mse}")
 
 # Validate the model
 y_val_pred = model.predict(X_val)
@@ -93,3 +97,13 @@ output_file = os.path.join(RESULTS_DIR, "Linear_Regression_result2.csv")
 test_results.to_csv(output_file, index=False)
 
 print(f"Output data saved to {output_file}")
+df_metrics = pd.DataFrame(columns=['Model', "Model Description", "Train error", "Val error", "Test error"])
+
+df_metrics.loc[len(df_metrics)] = ["Model 1", "All categorical values+numerical values", train_mse, val_mse, test_mse]
+
+if os.path.exists(os.path.join(RESULTS_DIR,"comparison.csv")):
+    df_metrics_ = pd.read_csv(os.path.join(RESULTS_DIR,"comparison.csv"))
+
+    df_metrics_ = pd.concat([df_metrics_, df_metrics])
+
+df_metrics_.to_csv(os.path.join(RESULTS_DIR,"comparison.csv"), index=False)

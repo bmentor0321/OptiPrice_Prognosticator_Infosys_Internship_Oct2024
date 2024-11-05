@@ -1,0 +1,4 @@
+Model,Model_Description,Train_Error,Val_Error,Test_Error,Model Description,Train error,Val error,Test error
+Linear Regression1,Linear regression with All numerical values with normalise the all values in a same range,1.0094624765336167e-26,1.2020304856814078e-26,1.006679074741557e-26,,,,
+Model 1,,,,,All numerical features,1.0094624765336167e-26,1.2020304856814078e-26,1.006679074741557e-26
+Model 1,,,,,All categorical values+numerical values,6051.160535541749,7430.520849705826,6702.2726929285955

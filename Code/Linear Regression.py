@@ -7,7 +7,7 @@
 # In[26]:
 
 import os
-from Utils.constants import RAW_DIR,RESULTS_DIR
+from Utils.constants import RAW_DIR,RESULTS_DIR,PROCESSED_DIR
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
@@ -92,6 +92,10 @@ X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, r
 
 model = LinearRegression()
 model.fit(X_train, y_train)
+y_train_pred = model.predict(X_train)
+train_mae = mean_absolute_error(y_train, y_train_pred)
+train_mse = mean_squared_error(y_train, y_train_pred)
+print(f"Training MAE: {train_mae}, Training MSE: {train_mse}")
 
 
 # ## Step 4: Validate the model
@@ -103,6 +107,7 @@ y_val_pred = model.predict(X_val)
 val_mae = mean_absolute_error(y_val, y_val_pred)
 val_mse = mean_squared_error(y_val, y_val_pred)
 print(f"Validation MAE: {val_mae}, Validation MSE: {val_mse}")
+
 
 
 # ## Step 5: Test the model
@@ -139,3 +144,17 @@ output_file = os.path.join(RESULTS_DIR, "Linear_Regression_result.csv")
 test_results.to_csv(output_file, index=False)
 
 print(f"Output data saved to {output_file}")
+
+df_metrics = pd.DataFrame(columns=['Model', "Model Description", "Train error", "Val error", "Test error"])
+
+df_metrics.loc[len(df_metrics)] = ["Model 1", "All numerical features", train_mse, val_mse, test_mse]
+
+if os.path.exists(os.path.join(RESULTS_DIR,"comparison.csv")):
+    df_metrics_ = pd.read_csv(os.path.join(RESULTS_DIR,"comparison.csv"))
+
+    df_metrics_ = pd.concat([df_metrics_, df_metrics])
+
+df_metrics_.to_csv(os.path.join(RESULTS_DIR,"comparison.csv"), index=False)
+
+
+
