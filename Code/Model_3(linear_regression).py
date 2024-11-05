@@ -34,6 +34,11 @@ pipeline = Pipeline([
 # Train the model
 pipeline.fit(X_train, y_train)
 
+# Calculate training error (RMSE)
+y_train_pred = pipeline.predict(X_train)
+train_rmse = mean_squared_error(y_train, y_train_pred, squared=False)
+print(f'Training RMSE: {train_rmse}')
+
 # Validate the model
 y_val_pred = pipeline.predict(X_val)
 val_rmse = mean_squared_error(y_val, y_val_pred, squared=False)
@@ -41,8 +46,6 @@ print(f'Validation RMSE: {val_rmse}')
 
 # Test the model
 y_test_pred = pipeline.predict(X_test)
-
-# Calculate RMSE on test data
 test_rmse = mean_squared_error(y_test, y_test_pred, squared=False)
 print(f'Test RMSE: {test_rmse}')
 
@@ -55,5 +58,5 @@ results['Y_True'] = y_test
 results['Y_Predicted'] = y_test_pred
 results['Error'] = error
 
-results.to_csv('C:/Users/viroc/Documents/Infosys Springboard Internship/Project/OptiPrice_Prognosticator_Infosys_Internship_Oct2024/Dataset/test_results_with_error.csv', index=False)
+results.to_csv('C:/Users/viroc/Documents/Infosys Springboard Internship/Project/OptiPrice_Prognosticator_Infosys_Internship_Oct2024/Dataset/Model_3_test_results_with_error.csv', index=False)
 print("Test results with predictions and error saved to 'test_results_with_error.csv'")
