@@ -1,4 +1,3 @@
-
 import pandas as pd
 import os
 from sklearn.model_selection import train_test_split
@@ -17,6 +16,7 @@ data = pd.read_csv(file_path)
 
 X = data.drop(columns=['Historical_Cost_of_Ride'])
 Y = data['Historical_Cost_of_Ride']
+
 
 preprocessor = ColumnTransformer(
     transformers=[
@@ -37,6 +37,11 @@ X_val, X_test, Y_val, Y_test = train_test_split(X_temp, Y_temp, test_size=0.5, r
 
 
 pipeline.fit(X_train, Y_train)
+
+
+Y_train_pred = pipeline.predict(X_train)
+train_mse = mean_squared_error(Y_train, Y_train_pred)
+print(f'Training Mean Squared Error: {train_mse}')
 
 
 Y_val_pred = pipeline.predict(X_val)
@@ -63,11 +68,3 @@ try:
     print("CSV file saved successfully at:", output_file_path)
 except Exception as e:
     print("Error saving CSV:", e)
-
-<<<<<<< HEAD
-=======
-
-
-
-
->>>>>>> e233f56c2505fe9bae6e5a7db879edaf335380b6
