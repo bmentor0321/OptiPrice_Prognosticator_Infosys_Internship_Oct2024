@@ -1,0 +1,3 @@
+Model,Model_Description,Train_Error,Val_Error,Test_Error
+Random Forest,Using numerics and categoricals columns,0.013510875310046017,0.03870685311777823,0.0386445888175878
+Linear Regression,Using numerics and categoricals columns,0.36469722349793593,0.2948306999671364,0.31106966573858047
