@@ -1,12 +1,16 @@
 import numpy as np
 import pandas as pd
+from Utils.constants import RAW_DIR, PROCESSED_DIR
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression, Lasso, Ridge
 from sklearn.svm import SVR
 from sklearn.metrics import root_mean_squared_error
 
 # Load the dataset
-data = pd.read_csv('dynamic_pricing.csv')
+input_file = os.path.join(RAW_DIR, "dynamic_pricing.csv")
+data = pd.read_csv(input_file)
+
 
 # Select features and target variable
 X = data[['Number_of_Riders', 'Number_of_Drivers', 'Number_of_Past_Rides', 'Average_Ratings', 'Expected_Ride_Duration']]
@@ -56,6 +60,7 @@ for model_name, model in models.items():
 results_data = pd.DataFrame(results)
 
 # Save the results to a CSV file
-results_data.to_csv('model1_errors.csv', index=False)
+output_file = os.path.join(PROCESSED_DIR, "model1_errors.csv")
+data.to_csv(output_file, index=False)
 
-print("Model training and evaluation complete. Results saved to 'model1_errors.csv'.")
+print(f"Processed data saved to {output_file})
