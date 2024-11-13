@@ -2,5 +2,4 @@ dynamic pricing code
 Model_1=Build a Basic model
 Model_2=Add standard scaling
 Model_3=one hot encoding
-Model_4=Adjust historical cost of ride
-Model_5=Feature Engineering
+Model_4=Adjust historical cost of ride and feature engineering
