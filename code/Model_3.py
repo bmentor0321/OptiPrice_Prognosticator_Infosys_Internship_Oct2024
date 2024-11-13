@@ -3,25 +3,48 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, PolynomialFeatures
+import numpy as np
 
-# Define constants with updated path, features to scale, and target variable
+# Define constants
 DATASET_PATH = "C:/Users/chide/OneDrive/Desktop/infosys/Dataset/dynamic_pricing.csv"
 FEATURES_TO_SCALE = ['Number_of_Riders', 'Number_of_Drivers', 'Expected_Ride_Duration']
 TARGET_VARIABLE = "Historical_Cost_of_Ride"
 
+# Feature Engineering Function
+def feature_engineering(X):
+    # Polynomial features for selected variables
+    poly = PolynomialFeatures(degree=2, include_bias=False)
+    poly_features = poly.fit_transform(X[['Number_of_Riders', 'Number_of_Drivers', 'Expected_Ride_Duration']])
+    
+    # Manually create feature names if get_feature_names_out is not available
+    feature_names = poly.get_feature_names(['Number_of_Riders', 'Number_of_Drivers', 'Expected_Ride_Duration'])
+    poly_df = pd.DataFrame(poly_features, columns=feature_names, index=X.index)
+    
+    # Interaction terms
+    X['Riders_x_Drivers'] = X['Number_of_Riders'] * X['Number_of_Drivers']
+    X['Riders_x_Duration'] = X['Number_of_Riders'] * X['Expected_Ride_Duration']
+    X['Drivers_x_Duration'] = X['Number_of_Drivers'] * X['Expected_Ride_Duration']
+    
+    # Log transformation to reduce skewness in variables
+    X['Log_Number_of_Riders'] = np.log1p(X['Number_of_Riders'])
+    X['Log_Number_of_Drivers'] = np.log1p(X['Number_of_Drivers'])
+    X['Log_Expected_Ride_Duration'] = np.log1p(X['Expected_Ride_Duration'])
+    
+    # Combine original features with engineered features
+    X = pd.concat([X, poly_df], axis=1)
+    
+    return X
+
 # Data Preprocessing
 def load_and_preprocess_data(filepath):
-    try:
-        df = pd.read_csv(filepath)
-    except FileNotFoundError:
-        print(f"Error: The file at {filepath} was not found.")
-        return None, None, None, None, None, None
-
-    # Selecting numerical features and scaling specified features
+    df = pd.read_csv(filepath)
     X = df.select_dtypes(include=['float64', 'int64']).drop(columns=[TARGET_VARIABLE])
     y = df[TARGET_VARIABLE]
     
+    # Feature engineering
+    X = feature_engineering(X)
+
     # Feature scaling
     scaler = StandardScaler()
     X[FEATURES_TO_SCALE] = scaler.fit_transform(X[FEATURES_TO_SCALE])
@@ -32,62 +55,40 @@ def load_and_preprocess_data(filepath):
 
     return X_train, X_val, X_test, y_train, y_val, y_test
 
-# Model Training
-def train_model(X_train, y_train):
+# Model Training, Validation, Testing
+def train_validate_test_model(X_train, X_val, X_test, y_train, y_val, y_test, save_path):
     model = LinearRegression()
     model.fit(X_train, y_train)
-    return model
 
-# Model Validation
-def validate_model(model, X_val, y_val):
+    # Validation
     y_pred_val = model.predict(X_val)
-    val_error = mean_squared_error(y_val, y_pred_val, squared=False)  # RMSE calculation
-    return val_error
+    val_error = mean_squared_error(y_val, y_pred_val, squared=False)
 
-# Model Testing
-def test_model(model, X_test, y_test, save_path):
+    # Testing
     y_pred_test = model.predict(X_test)
-    test_error = mean_squared_error(y_test, y_pred_test, squared=False)  # RMSE calculation
+    test_error = mean_squared_error(y_test, y_pred_test, squared=False)
 
+    # Save results
     results = X_test.copy()
     results[TARGET_VARIABLE] = y_test
     results['Predicted_Cost_of_Ride'] = y_pred_test
     results['Error'] = results[TARGET_VARIABLE] - results['Predicted_Cost_of_Ride']
-
-    # Save results to CSV
+    
     try:
         results.to_csv(save_path, index=False)
         print(f"Results saved to {save_path}")
     except Exception as e:
         print(f"Error saving file: {e}")
+    
+    return val_error, test_error
 
-    return test_error
-
-# Calculate training error
-def calculate_training_error(model, X_train, y_train):
-    y_pred_train = model.predict(X_train)
-    train_error = mean_squared_error(y_train, y_pred_train, squared=False)  # RMSE calculation
-    return train_error
-
-# Main Script
+# Main script
 if __name__ == "__main__":
-    # Load and preprocess data
     file_path = DATASET_PATH
+    save_path = "C:/Users/chide/OneDrive/Desktop/infosys/Model_3_test_result_with_error.csv"
     X_train, X_val, X_test, y_train, y_val, y_test = load_and_preprocess_data(file_path)
     
     if X_train is not None:
-        # Train the model
-        model = train_model(X_train, y_train)
-
-        # Calculate training error
-        training_error = calculate_training_error(model, X_train, y_train)
-        print(f'Training RMSE: {training_error}')
-
-        # Validate the model
-        validation_error = validate_model(model, X_val, y_val)
-        print(f'Validation RMSE: {validation_error}')
-
-        # Test the model and save results
-        save_path = "C:/Users/chide/OneDrive/Desktop/infosys/Model_3_test_result_with_error.csv"
-        test_error = test_model(model, X_test, y_test, save_path)
+        val_error, test_error = train_validate_test_model(X_train, X_val, X_test, y_train, y_val, y_test, save_path)
+        print(f'Validation RMSE: {val_error}')
         print(f'Test RMSE: {test_error}')
