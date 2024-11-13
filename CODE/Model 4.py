@@ -22,8 +22,7 @@ y = data['Historical_Cost_of_Ride']
 # Separate numerical and categorical features
 numerical_features = ['Number_of_Riders', 'Number_of_Drivers', 'Number_of_Past_Rides',
                       'Average_Ratings', 'Expected_Ride_Duration', 'Cost_Per_Minute']
-if 'Cost_Per_Mile' in data.columns:
-    numerical_features.append('Cost_Per_Mile')
+
 
 categorical_features = ['Location_Category', 'Customer_Loyalty_Status', 'Time_of_Booking', 'Vehicle_Type']
 
