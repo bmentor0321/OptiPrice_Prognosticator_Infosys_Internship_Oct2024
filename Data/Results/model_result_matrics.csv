@@ -1,3 +1,11 @@
 Model,Model_Description,Train_Error,Val_Error,Test_Error
-Random Forest,Using numerics and categoricals columns,0.013510875310046017,0.03870685311777823,0.0386445888175878
-Linear Regression,Using numerics and categoricals columns,0.36469722349793593,0.2948306999671364,0.31106966573858047
+Model_1 (Random Forest),Using only numerics columns,27.8026323954019,72.45069589229277,76.7805215483592
+Model_1 (Linear Regression),Using only numerics columns,69.16857931727536,67.61782955713178,72.21706973355127
+Model_2 (Random Forest),Using only numerics columns + Standard Scaling,28.041909858374122,72.92980535443249,77.4643115336379
+Model_2 (Linear Regression),Using only numerics columns + Standard Scaling,69.16857931727536,67.61782955713183,72.21706973355126
+Model_3 (Random Forest),Using numerics + categorical columns (Scaling and Encoding),27.336640123321253,68.44694870931082,73.92700696775913
+Model_3 (Linear Regression),Using numerics + categorical columns (Scaling and Encoding),65.68751311140268,65.30316000864758,66.91950678432468
+Model_4 (Random Forest),Using all columns (Scaling and Encoding) + PCA,27.65917374998073,72.40253656361097,81.4255492811995
+Model_4 (Linear Regression),Using all columns (Scaling and Encoding) + PCA,65.68024217417289,64.69522349699832,67.58166966666474
+Model_5 (Random Forest),Using numerics and categoricals columns + Feature Extraction ,10.8944406465303,31.08854927152227,36.29047099874018
+Model_5 (Linear Regression),Using numerics and categoricals columns + Feature Extraction,174.8398451444313,160.28590004252828,160.63626854521766
