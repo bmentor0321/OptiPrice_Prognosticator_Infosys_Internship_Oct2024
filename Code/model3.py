@@ -55,14 +55,16 @@ for col in categorical_columns:
 # Separate features (X) and target (y)
 X = df.drop(columns=['Historical_Cost_of_Ride', 'Adjusted_Cost'])
 y = df['Adjusted_Cost']
-
 # Normalize the independent variables
 scaler = MinMaxScaler()
 X_normalized = scaler.fit_transform(X)
 
+
+
 # Split the data
 X_train, X_temp, y_train, y_temp = train_test_split(X_normalized, y, test_size=0.3, random_state=42)
 X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
+
 
 # Train the model
 model = LinearRegression()
@@ -93,13 +95,13 @@ test_results['Y_True'] = y_test
 test_results['Y_Predicted'] = y_test_pred
 test_results['Error'] = errors
 
-output_file = os.path.join(RESULTS_DIR, "Linear_Regression_result2.csv")
+output_file = os.path.join(RESULTS_DIR, "Linear_Regression_result3.csv")
 test_results.to_csv(output_file, index=False)
 
 print(f"Output data saved to {output_file}")
 df_metrics = pd.DataFrame(columns=['Model', "Model Description", "Train error", "Val error", "Test error"])
 
-df_metrics.loc[len(df_metrics)] = ["Model 1", "All categorical values+numerical values", train_mse, val_mse, test_mse]
+df_metrics.loc[len(df_metrics)] = ["Model3", "All categorical values+numerical values", train_mse, val_mse, test_mse]
 
 if os.path.exists(os.path.join(RESULTS_DIR,"comparison.csv")):
     df_metrics_ = pd.read_csv(os.path.join(RESULTS_DIR,"comparison.csv"))

@@ -2,3 +2,9 @@ Model,Model Description,Train error,Val error,Test error
 Model 1,All numerical features,1.01e-26,1.2e-26,1.01e-26
 Model 1,All categorical values+numerical values,6051.160536,7430.52085,6702.272693
 Model with PCA,"All categorical values + numerical values, PCA applied",6065.470123516933,7391.903785317655,6705.4050184166645
+Model 1,All numerical features,1.0094624765336167e-26,1.2020304856814078e-26,1.006679074741557e-26
+Model 1,All numerical features with normalisation,1.0094624765336167e-26,1.2020304856814078e-26,1.006679074741557e-26
+Model 1,All categorical values+numerical values,6051.160535541749,7430.520849705826,6702.272692928596
+Model3,All categorical values+numerical values,6051.160535541749,7430.520849705826,6702.272692928596
+Model2,All numerical features with normalisation,1.0094624765336167e-26,1.2020304856814078e-26,1.006679074741557e-26
+Model1,All numerical features,1.0094624765336169e-26,1.2020304856814078e-26,1.006679074741557e-26

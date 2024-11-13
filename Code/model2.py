@@ -68,11 +68,13 @@ data
 # In[28]:
 
 
+
 X = df.select_dtypes(include=['int64', 'float64']).drop(columns=['Historical_Cost_of_Ride'])  # Independent variables
 y = df['Adjusted_Cost']  # Dependent variable
 # Normalize the independent variables
 scaler = MinMaxScaler()
 X_normalized = scaler.fit_transform(X)
+
 
 
 # ## Step 2: Split the data into training, validation, and testing sets
@@ -140,14 +142,14 @@ test_results['Y_True'] = y_test
 test_results['Y_Predicted'] = y_test_pred
 test_results['Error'] = errors
 
-output_file = os.path.join(RESULTS_DIR, "Linear_Regression_result.csv")
+output_file = os.path.join(RESULTS_DIR, "Linear_Regression_result2.csv")
 test_results.to_csv(output_file, index=False)
 
 print(f"Output data saved to {output_file}")
 
 df_metrics = pd.DataFrame(columns=['Model', "Model Description", "Train error", "Val error", "Test error"])
 
-df_metrics.loc[len(df_metrics)] = ["Model 1", "All numerical features", train_mse, val_mse, test_mse]
+df_metrics.loc[len(df_metrics)] = ["Model2", "All numerical features with normalisation", train_mse, val_mse, test_mse]
 
 if os.path.exists(os.path.join(RESULTS_DIR,"comparison.csv")):
     df_metrics_ = pd.read_csv(os.path.join(RESULTS_DIR,"comparison.csv"))
