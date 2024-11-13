@@ -1,36 +1,31 @@
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.compose import ColumnTransformer
 from sklearn.linear_model import LinearRegression, Lasso, Ridge
+import os
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
 from sklearn.svm import SVR
 from sklearn.metrics import mean_squared_error
-from sklearn.pipeline import Pipeline
 
 # Load the dataset
-data = pd.read_csv('dynamic_pricing.csv')
+data = pd.read_csv("dynamic_pricing.csv")
+
 
 # Select features and target variable
-numerical_features = ['Number_of_Riders', 'Number_of_Drivers', 'Number_of_Past_Rides', 'Average_Ratings',
-                      'Expected_Ride_Duration']
-categorical_features = ['Location_Category', 'Customer_Loyalty_Status', 'Time_of_Booking',
-                        'Vehicle_Type']
-X = data[numerical_features + categorical_features]
+X = data[['Number_of_Riders', 'Number_of_Drivers', 'Number_of_Past_Rides', 'Average_Ratings', 'Expected_Ride_Duration']]
 y = data['Historical_Cost_of_Ride']
 
 # Split the data into train, validation, and test sets
 X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
 X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
 
-# Preprocessing: StandardScaler for numerical features, OneHotEncoder for categorical features
-preprocessor = ColumnTransformer(
-    transformers=[
-        ('num', StandardScaler(), numerical_features),
-        ('cat', OneHotEncoder(), categorical_features)
-    ])
+# Standardize the features
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_val = scaler.transform(X_val)
+X_test = scaler.transform(X_test)
 
-# Models to evaluate
+# Initialize models
 models = {
     "Linear Regression": LinearRegression(),
     "Lasso": Lasso(),
@@ -48,16 +43,13 @@ results = {
 
 # Train each model and calculate errors
 for name, model in models.items():
-    # Create a pipeline with preprocessing and model training
-    pipeline = Pipeline(steps=[('preprocessor', preprocessor), ('model', model)])
-
     # Fit the model on the training data
-    pipeline.fit(X_train, y_train)
+    model.fit(X_train, y_train)
 
     # Predict on train, validation, and test sets
-    y_train_pred = pipeline.predict(X_train)
-    y_val_pred = pipeline.predict(X_val)
-    y_test_pred = pipeline.predict(X_test)
+    y_train_pred = model.predict(X_train)
+    y_val_pred = model.predict(X_val)
+    y_test_pred = model.predict(X_test)
 
     # Calculate RMSE for train, validation, and test sets
     train_rmse = np.sqrt(mean_squared_error(y_train, y_train_pred))
@@ -74,6 +66,6 @@ for name, model in models.items():
 results_data = pd.DataFrame(results)
 
 # Save the results to a CSV file
-results_data.to_csv('model3_errors.csv', index=False)
+results_data.to_csv('model_2_errors.csv', index=False)
 
-print("Model training complete and results saved to 'model2_errors.csv'")
+print(f"Processed data saved as 'model_2_errors.csv'")
