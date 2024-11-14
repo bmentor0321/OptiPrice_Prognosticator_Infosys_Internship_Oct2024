@@ -1,0 +1,5 @@
+Models,Description,Train Error,Validation Error,Test Error
+Model 1,All numerical features,67.88061655,74.71145899,71.62089733
+Model 2,All numerical features + Standard Scalar introduced,67.87079139,74.57684362,71.55876496
+Model 3,All numerical features + Standard Scalar introduced +categorical features one hot encoded,64.2047678,70.30861876,67.47595895
+Model 4,"All numerical features + Standard Scalar introduced  + categorical features one hot encoded + Feature Engineering(added ' Cost_Per_Minute','Location_Demand' and 'Avg_Cost_Per_Vehicle_Type')",33.3490937,37.1715346,35.8643301
