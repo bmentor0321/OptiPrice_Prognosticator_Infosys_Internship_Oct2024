@@ -4,7 +4,7 @@ from sklearn.linear_model import LinearRegression, Lasso
 from sklearn.metrics import mean_squared_error, r2_score
 
 # Load your data
-data = pd.read_csv("dynamic_pricing.csv")  # Replace with your dataset path
+data = pd.read_csv("dynamic_pricing.csv") 
 
 # Define features (X) and target (y)
 X = data[['Number_of_Riders', 'Number_of_Drivers', 'Number_of_Past_Rides', 'Average_Ratings', 'Expected_Ride_Duration']]
