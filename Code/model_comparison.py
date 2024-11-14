@@ -1,94 +1,148 @@
-# Import necessary libraries
-import pandas as pd
-import numpy as np
 import os
+import pandas as pd
 from Utils.constants import RAW_DIR, PROCESSED_DIR
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.compose import make_column_transformer
-from sklearn.metrics import mean_absolute_percentage_error
+from sklearn.compose import ColumnTransformer
 
-# Load the raw data file
+# Load the dataset
 input_file = os.path.join(RAW_DIR, "dynamic_pricing.csv")
-df = pd.read_csv(input_file)
-# Load the raw data
-input_file = os.path.join(RAW_DIR, "dynamic_pricing.csv")
-df = pd.read_csv(input_file)
+data = pd.read_csv(input_file)
 
-# Feature Engineering: Calculate demand-supply ratio, demand and supply classifications, and metrics
-df["d_s_ratio"] = round(df["Number_of_Riders"] / df["Number_of_Drivers"], 2)
-df["demand_class"] = np.where(df["Number_of_Riders"] > np.percentile(df["Number_of_Riders"], 75), "high_demand", "low_demand")
-df["supply_class"] = np.where(df["Number_of_Drivers"] > np.percentile(df["Number_of_Drivers"], 75), "high_supply", "low_supply")
-
-df["demand_metric"] = np.where(df["demand_class"] == "high_demand",
-                               df["Number_of_Riders"] / np.percentile(df["Number_of_Riders"], 75),
-                               df["Number_of_Riders"] / np.percentile(df["Number_of_Riders"], 25))
-df["supply_metric"] = np.where(df["supply_class"] == "high_supply",
-                               df["Number_of_Drivers"] / np.percentile(df["Number_of_Drivers"], 75),
-                               df["Number_of_Drivers"] / np.percentile(df["Number_of_Drivers"], 25))
-
-# Define features and target variable
-X = df[['Number_of_Riders', 'Number_of_Drivers', 'Expected_Ride_Duration', 'demand_metric', 'supply_metric', 
-        'Location_Category', 'Time_of_Booking', 'Vehicle_Type']]
-y = df['Historical_Cost_of_Ride']
-
-# Identify categorical columns
-categorical_columns = ['Location_Category', 'Time_of_Booking', 'Vehicle_Type']
-
-# Initialize an empty list to store results
+# Prepare an empty list to store results for each model
 results = []
 
-# Define a function to evaluate and store model performance using MAPE
-def evaluate_model(X_train, X_val, X_test, y_train, y_val, y_test, model_desc):
-    model = LinearRegression()
-    model.fit(X_train, y_train)
+# Function to calculate RMSE
+def calculate_rmse(y_true, y_pred):
+    return mean_squared_error(y_true, y_pred, squared=False)
 
-    train_mape = mean_absolute_percentage_error(y_train, model.predict(X_train))
-    val_mape = mean_absolute_percentage_error(y_val, model.predict(X_val))
-    test_mape = mean_absolute_percentage_error(y_test, model.predict(X_test))
+### Model 1: All Numerical Features
+X = data[['Number_of_Riders', 'Number_of_Drivers', 'Number_of_Past_Rides', 'Average_Ratings', 'Expected_Ride_Duration']]
+y = data['Historical_Cost_of_Ride']
 
-    results.append({
-        'Model_Description': model_desc,
-        'Train_MAPE': train_mape,
-        'Val_MAPE': val_mape,
-        'Test_MAPE': test_mape
-    })
-
-# Split data into training, validation, and test sets
+# Split the data
 X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
 X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
 
-# 1. Linear Regression with Numerical Features Only
-evaluate_model(X_train[['Number_of_Riders', 'Number_of_Drivers', 'Expected_Ride_Duration', 'demand_metric', 'supply_metric']],
-               X_val[['Number_of_Riders', 'Number_of_Drivers', 'Expected_Ride_Duration', 'demand_metric', 'supply_metric']],
-               X_test[['Number_of_Riders', 'Number_of_Drivers', 'Expected_Ride_Duration', 'demand_metric', 'supply_metric']],
-               y_train, y_val, y_test, "LR with Numerical Features Only")
+# Train model
+model1 = LinearRegression()
+model1.fit(X_train, y_train)
 
-# 2. Linear Regression with One-Hot Encoding
-column_trans = make_column_transformer((OneHotEncoder(sparse_output=False), categorical_columns), remainder='passthrough')
-X_transformed = column_trans.fit_transform(X)
-X_train, X_temp, y_train, y_temp = train_test_split(X_transformed, y, test_size=0.3, random_state=42)
-X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
-evaluate_model(X_train, X_val, X_test, y_train, y_val, y_test, "LR with One-Hot Encoding")
+# Calculate errors
+train_rmse = calculate_rmse(y_train, model1.predict(X_train))
+val_rmse = calculate_rmse(y_val, model1.predict(X_val))
+test_rmse = calculate_rmse(y_test, model1.predict(X_test))
 
-# 3. Linear Regression with Standard Scaling
+# Append results
+results.append({
+    'Model': 'Model 1',
+    'Description': 'All numerical features',
+    'Train RMSE': train_rmse,
+    'Validation RMSE': val_rmse,
+    'Test RMSE': test_rmse
+})
+
+### Model 2: Numerical Features + Standard Scaler
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_val_scaled = scaler.transform(X_val)
 X_test_scaled = scaler.transform(X_test)
-evaluate_model(X_train_scaled, X_val_scaled, X_test_scaled, y_train, y_val, y_test, "LR with Standard Scaling")
 
-# 4. Linear Regression with Scaling and One-Hot Encoding
-X_scaled_encoded = column_trans.fit_transform(X)
-X_train, X_temp, y_train, y_temp = train_test_split(X_scaled_encoded, y, test_size=0.3, random_state=42)
+model2 = LinearRegression()
+model2.fit(X_train_scaled, y_train)
+
+# Calculate errors
+train_rmse = calculate_rmse(y_train, model2.predict(X_train_scaled))
+val_rmse = calculate_rmse(y_val, model2.predict(X_val_scaled))
+test_rmse = calculate_rmse(y_test, model2.predict(X_test_scaled))
+
+# Append results
+results.append({
+    'Model': 'Model 2',
+    'Description': 'All numerical features + Standard Scaler',
+    'Train RMSE': train_rmse,
+    'Validation RMSE': val_rmse,
+    'Test RMSE': test_rmse
+})
+
+### Model 3: Numerical Features + Standard Scaler + One-Hot Encoded Categorical Features
+# Only include 'Vehicle_Type' if it exists in the data
+categorical_features = ['Vehicle_Type'] if 'Vehicle_Type' in data.columns else []
+numerical_features = X.columns
+
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', StandardScaler(), numerical_features),
+        ('cat', OneHotEncoder(), categorical_features)
+    ],
+    remainder='passthrough'
+)
+
+X_train_processed = preprocessor.fit_transform(X_train)
+X_val_processed = preprocessor.transform(X_val)
+X_test_processed = preprocessor.transform(X_test)
+
+model3 = LinearRegression()
+model3.fit(X_train_processed, y_train)
+
+# Calculate errors
+train_rmse = calculate_rmse(y_train, model3.predict(X_train_processed))
+val_rmse = calculate_rmse(y_val, model3.predict(X_val_processed))
+test_rmse = calculate_rmse(y_test, model3.predict(X_test_processed))
+
+# Append results
+results.append({
+    'Model': 'Model 3',
+    'Description': 'All numerical features + Standard Scaler + Categorical Features One-Hot Encoded',
+    'Train RMSE': train_rmse,
+    'Validation RMSE': val_rmse,
+    'Test RMSE': test_rmse
+})
+
+### Model 4: Numerical Features + Standard Scaler + One-Hot Encoded Categorical Features + Engineered Features
+data['Cost_Per_Minute'] = data['Historical_Cost_of_Ride'] / data['Expected_Ride_Duration']
+data['Location_Demand'] = data['Number_of_Riders'] / data['Number_of_Drivers']
+if 'Vehicle_Type' in data.columns:
+    data['Avg_Cost_Per_Vehicle_Type'] = data.groupby('Vehicle_Type')['Historical_Cost_of_Ride'].transform('mean')
+
+# Updated features including engineered ones
+X = data[['Number_of_Riders', 'Number_of_Drivers', 'Number_of_Past_Rides', 'Average_Ratings', 
+          'Expected_Ride_Duration', 'Cost_Per_Minute', 'Location_Demand']]
+if 'Vehicle_Type' in data.columns:
+    X['Avg_Cost_Per_Vehicle_Type'] = data['Avg_Cost_Per_Vehicle_Type']
+
+# Re-split the data
+X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
 X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
-evaluate_model(X_train, X_val, X_test, y_train, y_val, y_test, "LR with Scaling and One-Hot Encoding")
 
-# Save results to a CSV file
+# Process the updated features
+X_train_processed = preprocessor.fit_transform(X_train)
+X_val_processed = preprocessor.transform(X_val)
+X_test_processed = preprocessor.transform(X_test)
+
+model4 = LinearRegression()
+model4.fit(X_train_processed, y_train)
+
+# Calculate errors
+train_rmse = calculate_rmse(y_train, model4.predict(X_train_processed))
+val_rmse = calculate_rmse(y_val, model4.predict(X_val_processed))
+test_rmse = calculate_rmse(y_test, model4.predict(X_test_processed))
+
+# Append results
+results.append({
+    'Model': 'Model 4',
+    'Description': 'All numerical features + Standard Scaler + Categorical Features One-Hot Encoded + Engineered Features',
+    'Train RMSE': train_rmse,
+    'Validation RMSE': val_rmse,
+    'Test RMSE': test_rmse
+})
+
+# Save results to CSV
 results_df = pd.DataFrame(results)
-results_file = os.path.join(PROCESSED_DIR, "model_comparison_results.csv")
-results_df.to_csv(results_file, index=False)
+output_file = os.path.join(PROCESSED_DIR, "model_comparison_results.csv")
+results_df.to_csv(output_file, index=False)
 
-
-print(f"Model comparison results saved to: {results_file}")
+print(f"Results saved to {output_file}")
+print(results_df)
