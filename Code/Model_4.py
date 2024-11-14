@@ -17,14 +17,34 @@ data['Average_Ratings_Cat'] = pd.cut(data['Average_Ratings'], bins=rating_bins, 
 
 # Feature Engineering
 
+#1-63.61
+# Calculate Adjusted Cost
+data['Adjusted_Ride_Cost'] = np.sqrt(data['Historical_Cost_of_Ride'] * data['Expected_Ride_Duration'])
 
+#2-17.69
 data['Cost_per_Minute'] = data['Historical_Cost_of_Ride'] / data['Expected_Ride_Duration']
 
-data['Loyalty_Cost_Impact'] = data['Number_of_Past_Rides'] * data['Historical_Cost_of_Ride']
+#3-58.88
+time_cost_map = {'Morning': 1.15, 'Afternoon': 1.15, 'Evening': 1.1, 'Night': 1.2}
+data['Booking_Time_Cost_Impact'] = data['Time_of_Booking'].map(time_cost_map) * data['Historical_Cost_of_Ride']
 
-#For very long rides, prices often scale non-linearly. Use a log transformation of Expected_Ride_Duration to capture this effect.
-data['Log_Ride_Duration'] = np.log(data['Expected_Ride_Duration'] + 1)  # Adding 1 to avoid log(0)
+#4-54.47
+#loyalty_cost_map = {'Silver': 0.9, 'Regular': 1.0, 'Gold': 0.85}
+#data['Loyalty_Cost_Impact'] = data['Customer_Loyalty_Status'].map(loyalty_cost_map) * data['Historical_Cost_of_Ride']
 
+#5-46.18
+#location_cost_map = {'Urban': 1.2, 'Suburban': 1.1, 'Rural': 0.9}
+#data['Location_Cost_Multiplier'] = data['Location_Category'].map(location_cost_map)
+#data['Location_Adjusted_Cost'] = data['Historical_Cost_of_Ride'] * data['Location_Cost_Multiplier']
+
+#6-7.34
+#data['Cost_per_Rider'] = data['Historical_Cost_of_Ride'] / data['Number_of_Riders']
+
+#7-25.8
+#data['Duration_Adjusted_Cost'] = data['Historical_Cost_of_Ride'] * (data['Expected_Ride_Duration'] / data['Expected_Ride_Duration'].mean())
+
+#8-11.36
+#data['Loyalty_Cost_Impact'] = data['Number_of_Past_Rides'] * data['Historical_Cost_of_Ride']
 
 # One-hot encode categorical features
 data = pd.get_dummies(data, columns=['Location_Category', 'Customer_Loyalty_Status', 'Time_of_Booking', 'Vehicle_Type', 'Average_Ratings_Cat'], drop_first=True)
