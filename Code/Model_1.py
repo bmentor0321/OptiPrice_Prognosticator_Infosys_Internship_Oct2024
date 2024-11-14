@@ -2,7 +2,8 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
-from constants import DATASET_PATH, TARGET_VARIABLE
+from sklearn.preprocessing import StandardScaler
+from constants import DATASET_PATH, TARGET_VARIABLE, FEATURES_TO_SCALE
 
 # Data Preprocessing
 def load_and_preprocess_data(filepath):
@@ -32,10 +33,7 @@ def validate_model(model, X_val, y_val):
 
 # Model Testing
 def test_model(model, X_test, y_test):
-    # Make predictions
     y_pred_test = model.predict(X_test)
-
-    # Calculate RMSE
     test_error = mean_squared_error(y_test, y_pred_test, squared=False)  # RMSE calculation
 
     results = X_test.copy()
