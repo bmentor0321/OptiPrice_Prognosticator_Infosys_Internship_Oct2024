@@ -1,0 +1,7 @@
+Model,Model_Description,Train_error,Val_error,Test_error
+Model_1,All Numerical Features (ANF),71.46,68.66,65.19
+Model_2,ANF + Standard scaling  (SS),72.06,72.06,69.17
+Model_3,ANF+ SS+ one hot encoding (OHN),73.16,73.16,65.66
+Model_4,ANF+ SS+ OHN + feature 1 : supply demand ratio (F1),65.18,69.3,65.9
+Model_5,ANF+ SS+ OHN+ F1 +feature2: customer value score (F2),65.18,69.4,66.01
+Model_6,ANF+ SS+ OHN+ F1+F2+feature 3 : time based demand multiplier(F3),65.2,69.3,66.1
