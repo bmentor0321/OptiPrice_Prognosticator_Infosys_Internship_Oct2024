@@ -4,31 +4,30 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 
-# Load the dataset
 df = pd.read_csv('dynamic_pricing.csv')
 
-# Calculate Revenue
+# Revenue
 df['Revenue'] = df['Number_of_Riders'] * df['Historical_Cost_of_Ride']
 
-# Calculate Total Cost (assuming Historical Cost is the cost)
+# Total Cost
 df['Total_Cost'] = df['Historical_Cost_of_Ride']
 
-# Calculate Profit
+# Profit
 df['Total_Profit'] = df['Revenue'] - df['Total_Cost']
 
-# Calculate Revenue Per Minute
+# Revenue Per Minute
 df['Revenue_Per_Minute'] = df['Revenue'] / df['Expected_Ride_Duration']
 
-# Calculate Profit Per Minute
+# Profit Per Minute
 df['Profit_Per_Minute'] = df['Total_Profit'] / df['Expected_Ride_Duration']
 
-# Calculate Cost Per Transaction
+# Cost Per Transaction
 df['Cost_Per_Transaction'] = df['Total_Cost'] / df['Number_of_Riders']
 
-# Calculate Revenue Per Transaction
+# Revenue Per Transaction
 df['Revenue_Per_Transaction'] = df['Revenue'] / df['Number_of_Riders']
 
-# Define the features (X) and target (y)
+# Features (X) and target (y)
 X = df[['Number_of_Riders', 'Number_of_Drivers', 'Location_Category', 'Customer_Loyalty_Status', 'Number_of_Past_Rides', 'Average_Ratings', 'Time_of_Booking', 'Vehicle_Type', 'Expected_Ride_Duration', 'Revenue_Per_Minute', 'Profit_Per_Minute', 'Cost_Per_Transaction', 'Revenue_Per_Transaction']]
 y = df['Historical_Cost_of_Ride']
 
