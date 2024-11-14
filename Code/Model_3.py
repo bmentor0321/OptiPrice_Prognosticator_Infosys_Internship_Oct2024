@@ -1,17 +1,15 @@
-# Import necessary libraries
-import os
 import pandas as pd
+import os
 import numpy as np
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, confusion_matrix
-from Utils.constants import RAW_DIR, file_name, RESULTS_DIR, output_file_name, processed_data_dir
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from Utils.constants import RAW_DIR, file_name, RESULTS_DIR
 from Utils.utils import get_mean
 
 # File paths
 NEW_DATAPATH = r'D:\Rishi\Data\Raw\dynamic_pricing.csv'  
-df = data = RAW_DIR = pd.read_csv(os.path.join(RAW_DIR, file_name))
 
 # Load the data
 try:
@@ -57,41 +55,80 @@ features = [col for col in df_encoded.columns if col not in ['Average_Ratings', 
 X = df_encoded[features]
 y = df_encoded['Rating_Category']
 
+# Label encode the target variable
+label_encoder = LabelEncoder()
+y_encoded = label_encoder.fit_transform(y)
+
 # Scale the numerical features
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
 # Split the data into train, validation, and test sets (60% train, 20% validation, 20% test)
-X_train, X_temp, y_train, y_temp = train_test_split(X_scaled, y, test_size=0.4, random_state=42)
+X_train, X_temp, y_train, y_temp = train_test_split(X_scaled, y_encoded, test_size=0.4, random_state=42)
 X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
 
-# Train logistic regression model on the training set
-model = LogisticRegression(random_state=42, max_iter=1000)
+# Train logistic regression model on the training set (multiclass classification)
+model = LogisticRegression(random_state=42, max_iter=1000, multi_class='ovr')
 model.fit(X_train, y_train)
 
-# Calculate accuracy and error rates
-train_accuracy = model.score(X_train, y_train)
-validation_accuracy = model.score(X_val, y_val)
-test_accuracy = model.score(X_test, y_test)
+# Make predictions on the test set
+y_pred = model.predict(X_test)
 
-train_error = 1 - train_accuracy
-validation_error = 1 - validation_accuracy
-test_error = 1 - test_accuracy
+# Ensure the results directory exists for model output
+RESULTS_DIR = r'D:\Model\Data\Results\output_files'
+os.makedirs(RESULTS_DIR, exist_ok=True)
 
-# Print model performance and error rates
-print("Train Error:", train_error)
-print("Validation Error:", validation_error)
-print("Test Error:", test_error)
+# Calculate ERROR and ACCURACY rates
+train_error = model.score(X_train, y_train)
+validation_error = model.score(X_val, y_val)
+test_error = model.score(X_test, y_test)
+
+# Calculate ACCURACY rates as (1 - ERROR)
+train_accuracy = 1 - train_error
+validation_accuracy = 1 - validation_error
+test_accuracy = 1 - test_error
+
+# Print model performance (as error rates)
+print("Train Error:", train_error * 100)  # Convert to percentage
+print("Validation Error:", validation_error * 100)  # Convert to percentage
+print("Test Error:", test_error * 100)  # Convert to percentage
+
+# Print model performance and error rates (reversed)
+print("Train Accuracy (as error):", train_accuracy * 100)  # Convert to percentage
+print("Validation Accuracy (as error):", validation_accuracy * 100)  # Convert to percentage
+print("Test Accuracy (as error):", test_accuracy * 100)  # Convert to percentage
 
 # Make predictions on the test set
 y_pred = model.predict(X_test)
 
 # Ensure the results directory exists
-RESULTS_DIR = r'D:\Rishi\Data\Results'
+RESULTS_DIR = r'D:\Rishi\Data\Results\output_files'
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
-# Define the output file path
+# Define the output file path for the results
 output_file_path = os.path.join(RESULTS_DIR, 'model_3_result.csv')
 
 # Write DataFrame to CSV at the specified path
 df_encoded.to_csv(output_file_path, index=False)
+
+# Define the full path for comparison.csv
+comparison_file_path = os.path.join(r'D:\Rishi\Data\Results\result_files', "comparison.csv")
+
+# Prepare the metrics for comparison.csv
+df_metrics = pd.DataFrame(columns=['Models', "Model Description", "Train error", "Val error", "Test error"])
+# Add the current model's metrics to the DataFrame (use error rates)
+df_metrics.loc[len(df_metrics)] = ["Model 3", "All Numerical Features + Standard Scaler Introduced + Categorical Features One Hot Encoded",train_error * 100, validation_error * 100, test_error * 100 ]
+
+# Check if comparison.csv already exists in the specified path, then append; otherwise, create a new file
+if os.path.exists(comparison_file_path):
+    # Read the existing metrics file
+    df_metrics_ = pd.read_csv(comparison_file_path)
+    
+    # Concatenate the new metrics to the existing ones
+    df_metrics_ = pd.concat([df_metrics_, df_metrics], ignore_index=True)
+else:
+    # If the file doesn't exist, start with the current metrics
+    df_metrics_ = df_metrics
+
+# Save the updated metrics back to comparison.csv
+df_metrics_.to_csv(comparison_file_path, index=False)

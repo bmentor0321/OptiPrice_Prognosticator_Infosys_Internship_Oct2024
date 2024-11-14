@@ -41,7 +41,6 @@ train_rmse = np.sqrt(mean_squared_error(Y_train, Y_train_pred))
 val_rmse = np.sqrt(mean_squared_error(Y_val, Y_val_pred))
 test_rmse = np.sqrt(mean_squared_error(Y_test, Y_test_pred))
 
-
 # Print RMSE values
 print("Train RMSE:", train_rmse)
 print("Validation RMSE:", val_rmse)
@@ -54,7 +53,7 @@ results['Predicted_Cost_of_Ride'] = Y_test_pred
 results['Error'] = results['Historical_Cost_of_Ride'] - results['Predicted_Cost_of_Ride']
 
 # Ensure the results directory exists
-RESULTS_DIR = r'D:\Rishi\Data\Results'
+RESULTS_DIR = r'D:\Rishi\Data\Results\output_files'
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
 # Define the full path for the output file
@@ -62,3 +61,26 @@ output_file_path = os.path.join(RESULTS_DIR, 'model_2_result.csv')
 
 # Save results to the specified directory
 results.to_csv(output_file_path, index=False)
+
+#  Define results directory
+RESULTS_DIR = r'D:\Rishi\Data\Results\result_files'
+# Initialize metrics DataFrame
+df_metrics = pd.DataFrame(columns=['Models', "Model Description", "Train error", "Val error", "Test error"])
+
+# Add the current model's metrics to the DataFrame
+df_metrics.loc[len(df_metrics)] = ["Model 2", "All Numerical Features + Standard Scaler Introduced", train_rmse, val_rmse, test_rmse]
+
+# Check if comparison.csv already exists in RESULTS_DIR, then append; otherwise, create a new file
+comparison_file_path = os.path.join(RESULTS_DIR, "comparison.csv")
+if os.path.exists(comparison_file_path):
+    # Read existing metrics file
+    df_metrics_ = pd.read_csv(comparison_file_path)
+    
+    # Concatenate the new metrics to the existing ones
+    df_metrics_ = pd.concat([df_metrics_, df_metrics], ignore_index=True)
+else:
+    # If the file doesn't exist, start with the current metrics
+    df_metrics_ = df_metrics
+
+# Save the updated metrics back to comparison.csv
+df_metrics_.to_csv(comparison_file_path, index=False)

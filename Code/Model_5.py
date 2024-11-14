@@ -1,3 +1,4 @@
+# Import necessary libraries
 import os
 import pandas as pd
 import numpy as np
@@ -5,13 +6,14 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
-from Utils.constants import RAW_DIR, file_name, RESULTS_DIR, output_file_name, processed_data_dir
+from Utils.constants import RAW_DIR, file_name, output_file_name, processed_data_dir
 from Utils.utils import get_mean
 
 # File paths
 NEW_DATAPATH = r'D:\Rishi\Data\Raw\dynamic_pricing.csv'  
-df = data = RAW_DIR = pd.read_csv(os.path.join(RAW_DIR, file_name))
 TARGET_VARIABLE = 'Historical_Cost_of_Ride'
+RESULTS_DIR = r'D:\Rishi\Data\Results\output_files'
+os.makedirs(RESULTS_DIR, exist_ok=True)
 
 # Feature Engineering and Preprocessing
 def load_and_preprocess_data(filepath):
@@ -33,12 +35,11 @@ def load_and_preprocess_data(filepath):
     combined_features = ['Customer_Loyalty_Status', 'Location_Category', 'Vehicle_Type', 'Time_of_Booking']
     df_encoded = pd.get_dummies(df, columns=combined_features)
 
-    # ---------- CORRELATION ANALYSIS ---------- #
-    # Calculate correlation with the target variable
+    # Correlation Analysis
     correlation_matrix = df_encoded.corr()
     target_correlation = correlation_matrix['Adjusted_Historical_Cost_of_Ride'].sort_values(ascending=False)
 
-    # Set a correlation threshold (e.g., 0.1) to filter features
+    # Set a correlation threshold to filter features
     correlation_threshold = 0.1
     selected_features = target_correlation[abs(target_correlation) > correlation_threshold].index.tolist()
     selected_features.remove('Adjusted_Historical_Cost_of_Ride')  # Exclude the target variable
@@ -64,39 +65,56 @@ def train_validate_test_model(X_train, X_val, X_test, y_train, y_val, y_test, se
     model = LinearRegression()
     model.fit(X_train, y_train)
 
-    # Validate the model
-    y_pred_val = model.predict(X_val)
-    val_rmse = mean_squared_error(y_val, y_pred_val, squared=False)
-    print(f"Validation RMSE: {val_rmse}")
+    # Calculate RMSE for Train, Validation, and Test sets
+    y_train_pred = model.predict(X_train)
+    train_rmse = mean_squared_error(y_train, y_train_pred, squared=False)
+    
+    y_val_pred = model.predict(X_val)
+    val_rmse = mean_squared_error(y_val, y_val_pred, squared=False)
 
-    # Test the model
-    y_pred_test = model.predict(X_test)
-    test_rmse = mean_squared_error(y_test, y_pred_test, squared=False)
-    r2 = r2_score(y_test, y_pred_test)
+    y_test_pred = model.predict(X_test)
+    test_rmse = mean_squared_error(y_test, y_test_pred, squared=False)
+    r2 = r2_score(y_test, y_test_pred)
+
+    # Print RMSE values
+    print(f"Train RMSE: {train_rmse}")
+    print(f"Validation RMSE: {val_rmse}")
     print(f"Test RMSE: {test_rmse}")
     print(f"Test R2 Score: {r2}")
 
-    # Prepare results for output (using the original data)
-    test_results = pd.DataFrame(X_test, columns=selected_features)
+    # Save metrics to comparison.csv
+    result_files = r'D:\Rishi\Data\Results\result_files'
+    comparison_file_path = os.path.join(result_files, "comparison.csv")
+    df_metrics = pd.DataFrame({
+        'Models': ["Model 5"],
+        'Model Description': ["Numerical Features with Feature Engineering and Correlation-Based Selection + Standard Scaling + One-Hot Encoding for Categorical Features + Adjusted Historical Cost of Ride as Target"],
+        'Train error': [train_rmse],
+        'Val error': [val_rmse],
+        'Test error': [test_rmse]
+    })
+    if os.path.exists(comparison_file_path):
+        df_existing_metrics = pd.read_csv(comparison_file_path)
+        df_combined_metrics = pd.concat([df_existing_metrics, df_metrics], ignore_index=True)
+    else:
+        df_combined_metrics = df_metrics
+    df_combined_metrics.to_csv(comparison_file_path, index=False)
 
-    # Include all original columns from the dataset (e.g., the ones you dropped)
+    # Prepare results for output
+    test_results = pd.DataFrame(X_test, columns=selected_features)
     test_results['Actual_Adjusted_Cost'] = y_test.values
-    test_results['Predicted_Adjusted_Cost'] = y_pred_test
+    test_results['Predicted_Adjusted_Cost'] = y_test_pred
     test_results['Error'] = test_results['Actual_Adjusted_Cost'] - test_results['Predicted_Adjusted_Cost']
 
-    # Combine the results with the original dataframe's relevant columns
+    # Combine results with the original dataset's relevant columns
     test_results_full = pd.concat([df.loc[X_test.index, :], test_results], axis=1)
 
-    # Save the results to CSV
+    # Save the detailed results to CSV
     test_results_full.to_csv(save_path, index=False)
-    print(f"Results saved to: {save_path}")
+    print(f"Detailed test results saved to: {save_path}")
 
 # Main function to execute the process
 def main():
-    # File paths
-    RESULTS_DIR = r'D:\Rishi\Data\Results'
-    os.makedirs(RESULTS_DIR, exist_ok=True)
-    output_file_path = os.path.join(RESULTS_DIR, 'model_5_results.csv')
+    output_file_path = os.path.join(RESULTS_DIR, 'model_5_result.csv')
 
     # Load and preprocess data
     X_train, X_val, X_test, y_train, y_val, y_test, selected_features, df = load_and_preprocess_data(NEW_DATAPATH)

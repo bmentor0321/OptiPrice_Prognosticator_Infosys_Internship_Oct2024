@@ -5,15 +5,12 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-from Utils.constants import RAW_DIR, file_name, RESULTS_DIR, output_file_name, processed_data_dir
+from sklearn.metrics import mean_squared_error
+from Utils.constants import RAW_DIR, file_name, RESULTS_DIR
 from Utils.utils import get_mean
 
-# File paths
-NEW_DATAPATH = r'D:\Rishi\Data\Raw\dynamic_pricing.csv'  
-df = data = RAW_DIR = pd.read_csv(os.path.join(RAW_DIR, file_name))
-
 # Load the data
+NEW_DATAPATH = r'D:\Rishi\Data\Raw\dynamic_pricing.csv'
 try:
     df = pd.read_csv(NEW_DATAPATH)
     df.columns = df.columns.str.strip()  # Remove any leading/trailing whitespace in column names
@@ -69,8 +66,42 @@ X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, r
 model = LinearRegression()
 model.fit(X_train, y_train)
 
-# Make predictions on the test set
+# Make predictions on the train, validation, and test sets
+y_train_pred = model.predict(X_train)
+y_val_pred = model.predict(X_val)
 y_test_pred = model.predict(X_test)
+
+# Calculate RMSE for each dataset
+train_rmse = np.sqrt(mean_squared_error(y_train, y_train_pred))
+val_rmse = np.sqrt(mean_squared_error(y_val, y_val_pred))
+test_rmse = np.sqrt(mean_squared_error(y_test, y_test_pred))
+
+# Print RMSE values
+print(f"Train RMSE: {train_rmse}")
+print(f"Validation RMSE: {val_rmse}")
+print(f"Test RMSE: {test_rmse}")
+
+# Initialize DataFrame to save model comparison metrics
+df_metrics = pd.DataFrame(columns=['Models', "Model Description", "Train error", "Val error", "Test error"])
+
+# Add the current model's metrics
+df_metrics.loc[len(df_metrics)] = ["Model 4", "All Numerical Features + Standard Scaler Introduced + Categorical Features One Hot Encoded + Adjusted Cost Of Ride", train_rmse, val_rmse, test_rmse]
+
+# Define the path for comparison.csv in RESULTS_DIR
+result_files = r'D:\Rishi\Data\Results\result_files'
+comparison_file_path = os.path.join(result_files, "comparison.csv")
+
+# Save or append the comparison.csv file
+if os.path.exists(comparison_file_path):
+    # If file exists, load existing data and append the new metrics
+    df_existing_metrics = pd.read_csv(comparison_file_path)
+    df_combined_metrics = pd.concat([df_existing_metrics, df_metrics], ignore_index=True)
+else:
+    # If file doesn't exist, save df_metrics as the new file
+    df_combined_metrics = df_metrics
+
+# Save combined metrics to comparison.csv
+df_combined_metrics.to_csv(comparison_file_path, index=False)
 
 # Inverse transform to get original scaled values for numerical features
 X_test_original = scaler.inverse_transform(X_test)
@@ -78,26 +109,20 @@ X_test_original = scaler.inverse_transform(X_test)
 # Convert X_test to a DataFrame with original feature names
 X_test_df = pd.DataFrame(X_test_original, columns=X.columns)
 
-# Add 1 and 0 conversion for categorical columns (optional fix if needed for boolean interpretation)
-X_test_df = X_test_df.applymap(lambda x: True if x == 1 else (False if x == 0 else x))
-
-# Extract test indices before splitting
-test_indices = X_test_df.index
-
-# Retrieve the original feature data (unscaled) from df_encoded using test indices
-original_test_data = df_encoded.iloc[test_indices].copy()
-
 # Add prediction results to the original test data
+original_test_data = X_test_df.copy()
 original_test_data['Actual_Adjusted_Cost'] = y_test.values
 original_test_data['Predicted_Adjusted_Cost'] = y_test_pred
 original_test_data['Error'] = original_test_data['Actual_Adjusted_Cost'] - original_test_data['Predicted_Adjusted_Cost']
 
-# Ensure the results directory exists
-RESULTS_DIR = r'D:\Rishi\Data\Results'
-os.makedirs(RESULTS_DIR, exist_ok=True)
+# Ensure the output_files directory exists
+output_files_dir = os.path.join(RESULTS_DIR, 'output_files')
+os.makedirs(output_files_dir, exist_ok=True)
 
-# Define the output file path
-output_file_path = os.path.join(RESULTS_DIR, 'model_4_result.csv')
+# Define the full path for the output file
+output_file_path = os.path.join(output_files_dir, 'model_4_result.csv')
 
-# Save the results to a CSV file including all original test features and predictions
+# Save the test results to a CSV file
 original_test_data.to_csv(output_file_path, index=False)
+print(f"Results saved to {output_file_path}")
+print(f"Comparison metrics saved to {comparison_file_path}")
