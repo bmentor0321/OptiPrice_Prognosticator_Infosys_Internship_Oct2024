@@ -7,9 +7,14 @@ from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 
-# Load the dataset
+#Define file paths
+RAW_DIR = 'Data/Raw'
+PROCESSED_DIR = 'Data/Processed'
 input_file = os.path.join(RAW_DIR, "dynamic_pricing.csv")
-data = pd.read_csv(input_file)
+
+
+# Load the raw data file
+df = pd.read_csv(input_file)
 
 # Prepare an empty list to store results for each model
 results = []
@@ -19,8 +24,8 @@ def calculate_rmse(y_true, y_pred):
     return mean_squared_error(y_true, y_pred, squared=False)
 
 ### Model 1: All Numerical Features
-X = data[['Number_of_Riders', 'Number_of_Drivers', 'Number_of_Past_Rides', 'Average_Ratings', 'Expected_Ride_Duration']]
-y = data['Historical_Cost_of_Ride']
+X = df[['Number_of_Riders', 'Number_of_Drivers', 'Number_of_Past_Rides', 'Average_Ratings', 'Expected_Ride_Duration']]
+y = df['Historical_Cost_of_Ride']
 
 # Split the data
 X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
@@ -68,8 +73,8 @@ results.append({
 })
 
 ### Model 3: Numerical Features + Standard Scaler + One-Hot Encoded Categorical Features
-# Only include 'Vehicle_Type' if it exists in the data
-categorical_features = ['Vehicle_Type'] if 'Vehicle_Type' in data.columns else []
+
+categorical_features = ['Vehicle_Type'] if 'Vehicle_Type' in df.columns else []
 numerical_features = X.columns
 
 preprocessor = ColumnTransformer(
@@ -102,16 +107,16 @@ results.append({
 })
 
 ### Model 4: Numerical Features + Standard Scaler + One-Hot Encoded Categorical Features + Engineered Features
-data['Cost_Per_Minute'] = data['Historical_Cost_of_Ride'] / data['Expected_Ride_Duration']
-data['Location_Demand'] = data['Number_of_Riders'] / data['Number_of_Drivers']
-if 'Vehicle_Type' in data.columns:
-    data['Avg_Cost_Per_Vehicle_Type'] = data.groupby('Vehicle_Type')['Historical_Cost_of_Ride'].transform('mean')
+df['Cost_Per_Minute'] = df['Historical_Cost_of_Ride'] / df['Expected_Ride_Duration']
+df['Location_Demand'] = df['Number_of_Riders'] / df['Number_of_Drivers']
+if 'Vehicle_Type' in df.columns:
+    df['Avg_Cost_Per_Vehicle_Type'] = df.groupby('Vehicle_Type')['Historical_Cost_of_Ride'].transform('mean')
 
 # Updated features including engineered ones
-X = data[['Number_of_Riders', 'Number_of_Drivers', 'Number_of_Past_Rides', 'Average_Ratings', 
+X = df[['Number_of_Riders', 'Number_of_Drivers', 'Number_of_Past_Rides', 'Average_Ratings', 
           'Expected_Ride_Duration', 'Cost_Per_Minute', 'Location_Demand']]
-if 'Vehicle_Type' in data.columns:
-    X['Avg_Cost_Per_Vehicle_Type'] = data['Avg_Cost_Per_Vehicle_Type']
+if 'Vehicle_Type' in df.columns:
+    X['Avg_Cost_Per_Vehicle_Type'] = df['Avg_Cost_Per_Vehicle_Type']
 
 # Re-split the data
 X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
