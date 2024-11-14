@@ -1,9 +1,5 @@
-Model_Description,Train_MAPE,Val_MAPE,Test_MAPE
-LR with Numerical Features Only,0.1723754633773717,0.1876931423412031,0.1695073239472283
-LR with One-Hot Encoding,0.1449883428106454,0.1514620922334998,0.1449662034262498
-LR with Standard Scaling,0.1450307371414531,0.1535993943007545,0.145854361104244
-LR with Scaling and One-Hot Encoding,0.1449883428106454,0.1514620922334998,0.1449662034262498
-LR with Numerical Features Only,0.17237546337737172,0.1876931423412031,0.16950732394722834
-LR with One-Hot Encoding,0.14498834281064546,0.15146209223349982,0.14496620342624988
-LR with Standard Scaling,0.1450307371414531,0.15359939430075456,0.14585436110424407
-LR with Scaling and One-Hot Encoding,0.14498834281064546,0.15146209223349982,0.14496620342624988
+Models,Description,Train Error,Validation Error,Test Error
+Model 1,All numerical features,67.88061655,74.71145899,71.62089733
+Model 2,All numerical features + Standard Scalar introduced,67.87079139,74.57684362,71.55876496
+Model 3,All numerical features + Standard Scalar introduced +categorical features one hot encoded,64.2047678,70.30861876,67.47595895
+Model 4,"All numerical features + Standard Scalar introduced  + categorical features one hot encoded + Feature Engineering(added ' Cost_Per_Minute','Location_Demand' and 'Avg_Cost_Per_Vehicle_Type')",33.3490937,37.1715346,35.8643301
