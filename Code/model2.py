@@ -61,6 +61,7 @@ data['Adjusted_Cost'] = data.apply(lambda row: dynamic_price_adjustment(
 
 # Display the updated DataFrame
 data
+df=data
 
 
 # ## Step 1: Select numerical columns as independent variables

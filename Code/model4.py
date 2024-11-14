@@ -63,20 +63,37 @@ data['Adjusted_Cost'] = data.apply(lambda row: dynamic_price_adjustment(
 
 # Display the updated DataFrame
 data
+scaler = MinMaxScaler()
+
+
+
+# Applying feature engineering to add new features
+data['demand_supply_ratio'] = data['Number_of_Riders'] / data['Number_of_Drivers']
+data['Normalized_Historical_Cost'] = scaler.fit_transform(data[['Historical_Cost_of_Ride']])
+data['cost_per_minute'] = data['Historical_Cost_of_Ride'] / data['Expected_Ride_Duration']
+
+# Map peak/off-peak status
+peak_hours = {'Night': 'peak', 'Evening': 'peak', 'Afternoon': 'off-peak'}
+data['Booking_Peak_Status'] = data['Time_of_Booking'].map(peak_hours).fillna('off-peak')
+data = pd.get_dummies(data, columns=['Booking_Peak_Status'], drop_first=True)
+
+# Encode loyalty status and location-loyalty interaction
+loyalty_mapping = {'Regular': 0, 'Silver': 1, 'Gold': 2}
+data['Customer_Loyalty_Encoded'] = data['Customer_Loyalty_Status'].map(loyalty_mapping)
+data['Location_Loyalty_Interaction'] = data['Location_Category'] + '_' + data['Customer_Loyalty_Status']
+data = pd.get_dummies(data, columns=['Location_Loyalty_Interaction'], drop_first=True)
+
+# Drop original columns not needed for model training
+X = data.drop(columns=['Historical_Cost_of_Ride', 'Adjusted_Cost', 'Time_of_Booking', 'Customer_Loyalty_Status', 'Location_Category'])
+y = data['Adjusted_Cost']
+X = pd.get_dummies(X, drop_first=True)
+
+# Normalize the independent variables
+
+X_normalized = scaler.fit_transform(X)
+
+
 df=data
-
-
-# ## Step 1: Select numerical columns as independent variables
-
-# In[28]:
-
-
-
-X = df.select_dtypes(include=['int64', 'float64']).drop(columns=['Historical_Cost_of_Ride'])  # Independent variables
-y = df['Adjusted_Cost']  # Dependent variable
-
-
-
 
 # ## Step 2: Split the data into training, validation, and testing sets
 
@@ -143,14 +160,14 @@ test_results['Y_True'] = y_test
 test_results['Y_Predicted'] = y_test_pred
 test_results['Error'] = errors
 
-output_file = os.path.join(RESULTS_DIR, "Linear_Regression_result.csv")
+output_file = os.path.join(RESULTS_DIR, "Linear_Regression_result4.csv")
 test_results.to_csv(output_file, index=False)
 
 print(f"Output data saved to {output_file}")
 
 df_metrics = pd.DataFrame(columns=['Model', "Model Description", "Train error", "Val error", "Test error"])
 
-df_metrics.loc[len(df_metrics)] = ["Model1", "All numerical features", train_mse, val_mse, test_mse]
+df_metrics.loc[len(df_metrics)] = ["Model4", "Feature engineering", train_mse, val_mse, test_mse]
 
 if os.path.exists(os.path.join(RESULTS_DIR,"comparison.csv")):
     df_metrics_ = pd.read_csv(os.path.join(RESULTS_DIR,"comparison.csv"))

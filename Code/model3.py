@@ -41,6 +41,7 @@ data['Adjusted_Cost'] = data.apply(lambda row: dynamic_price_adjustment(
 
 # Display the updated DataFrame
 data
+df=data
 
 
 # Apply Label Encoding to all categorical columns
