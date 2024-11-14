@@ -24,3 +24,5 @@ if os.path.exists(os.path.join(RESULTS_DIR,output_file_name)):
     df_metrics_ = pd.concat([df_metrics_, df_metrics])
 
 df_metrics_.to_csv(os.path.join(RESULTS_DIR, output_file_name), index=False)
+df_metrics_.to_csv(os.path.join(RESULTS_DIR, output_file_name), index=False)
+df_metrics_.to_csv(os.path.join(RESULTS_DIR, output_file_name), index=False)
