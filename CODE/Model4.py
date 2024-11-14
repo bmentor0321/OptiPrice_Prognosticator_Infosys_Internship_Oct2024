@@ -17,8 +17,9 @@ data = pd.read_csv('dynamic_pricing.csv')
 # Calculate 'Cost_Per_Minute'
 data['Cost_Per_Minute'] = data['Historical_Cost_of_Ride'] / data['Expected_Ride_Duration']
 
-# Add 'Location_Demand' and 'Avg_Cost_Per_Vehicle_Type'
+# Add 'Location_Demand'
 data['Location_Demand'] = data.groupby('Location_Category')['Number_of_Riders'].transform('count')
+# Add 'Avg_Cost_Per_Vehicle_Type'
 data['Avg_Cost_Per_Vehicle_Type'] = data.groupby('Vehicle_Type')['Historical_Cost_of_Ride'].transform('mean')
 
 # Define features (X) and target (y)
