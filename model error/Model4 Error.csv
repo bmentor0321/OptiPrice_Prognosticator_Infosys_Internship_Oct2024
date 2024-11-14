@@ -1,3 +1,0 @@
-Column1,Train Error,Validation Error,Test Error
-Linear Regression,45.09011471,52.64209132,45.48287162
-Lasso Regression,45.09573636,52.57099239,45.47667293
