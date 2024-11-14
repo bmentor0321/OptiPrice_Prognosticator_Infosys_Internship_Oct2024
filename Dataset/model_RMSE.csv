@@ -1,4 +1,4 @@
-Model,Model Description,Train error,Val error,Test error
+Model,Model Description,Train RMSE,Val RMSE,Test RMSE
 Model 1,All numerical features,67.83,74.7,71.65
 Model 2,All numerical features + Standard Scalar Introduced,67.83,74.7,71.65
 Model 3,All numerical features + Standard Scalar Introduced + One hot encoded,64.12,69.85,67.2
