@@ -6,14 +6,12 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
-from Utils.constants import RAW_DIR, file_name, RESULTS_DIR
 from Utils.utils import get_mean
+from Utils.constants import RAW_DIR ,RESULT_FILES_DIR, RAW_FILE_PATH, OUTPUT_FILES_DIR, LOYALTY_DISCOUNTS, BASE_FARE,PEAK_HOURS_MULTIPLIER, TRAFFIC_MULTIPLIER, PAST_RIDES_DISCOUNT, DURATION_MULTIPLIER, DURATION_THRESHOLD, HISTORICAL_COST_ADJUSTMENT_FACTOR, DISTANCE_THRESHOLD,output_file_name
 
-# Load the data
-NEW_DATAPATH = r'D:\Rishi\Data\Raw\dynamic_pricing.csv'
 try:
-    df = pd.read_csv(NEW_DATAPATH)
-    df.columns = df.columns.str.strip()  # Remove any leading/trailing whitespace in column names
+    df = pd.read_csv(RAW_FILE_PATH)
+    df.columns = df.columns.str.strip()  
     print("Data loaded successfully.")
 except FileNotFoundError as e:
     print(f"Error: {e}")
@@ -88,8 +86,7 @@ df_metrics = pd.DataFrame(columns=['Models', "Model Description", "Train error",
 df_metrics.loc[len(df_metrics)] = ["Model 4", "All Numerical Features + Standard Scaler Introduced + Categorical Features One Hot Encoded + Adjusted Cost Of Ride", train_rmse, val_rmse, test_rmse]
 
 # Define the path for comparison.csv in RESULTS_DIR
-result_files = r'D:\Rishi\Data\Results\result_files'
-comparison_file_path = os.path.join(result_files, "comparison.csv")
+comparison_file_path = os.path.join(RESULT_FILES_DIR, "comparison.csv")
 
 # Save or append the comparison.csv file
 if os.path.exists(comparison_file_path):
@@ -116,11 +113,11 @@ original_test_data['Predicted_Adjusted_Cost'] = y_test_pred
 original_test_data['Error'] = original_test_data['Actual_Adjusted_Cost'] - original_test_data['Predicted_Adjusted_Cost']
 
 # Ensure the output_files directory exists
-output_files_dir = os.path.join(RESULTS_DIR, 'output_files')
+output_files_dir = os.path.join(output_file_name, 'output_files')
 os.makedirs(output_files_dir, exist_ok=True)
 
 # Define the full path for the output file
-output_file_path = os.path.join(output_files_dir, 'model_4_result.csv')
+output_file_path = os.path.join(OUTPUT_FILES_DIR, 'model_4_result.csv')
 
 # Save the test results to a CSV file
 original_test_data.to_csv(output_file_path, index=False)

@@ -5,15 +5,12 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from Utils.constants import RAW_DIR, file_name, RESULTS_DIR
 from Utils.utils import get_mean
-
-# File paths
-NEW_DATAPATH = r'D:\Rishi\Data\Raw\dynamic_pricing.csv'  
-
+from Utils.constants import RAW_DIR ,RESULT_FILES_DIR, RAW_FILE_PATH, OUTPUT_FILES_DIR, LOYALTY_DISCOUNTS, BASE_FARE,PEAK_HOURS_MULTIPLIER, TRAFFIC_MULTIPLIER, PAST_RIDES_DISCOUNT, DURATION_MULTIPLIER, DURATION_THRESHOLD, HISTORICAL_COST_ADJUSTMENT_FACTOR, DISTANCE_THRESHOLD,output_file_name
+ 
 # Load the data
 try:
-    df = pd.read_csv(NEW_DATAPATH)
+    df = pd.read_csv(RAW_FILE_PATH)
     print("Data loaded successfully.")
 except FileNotFoundError as e:
     print(f"Error: {e}")
@@ -75,8 +72,7 @@ model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
 
 # Ensure the results directory exists for model output
-RESULTS_DIR = r'D:\Model\Data\Results\output_files'
-os.makedirs(RESULTS_DIR, exist_ok=True)
+os.makedirs(OUTPUT_FILES_DIR, exist_ok=True)
 
 # Calculate ERROR and ACCURACY rates
 train_error = model.score(X_train, y_train)
@@ -101,18 +97,11 @@ print("Test Accuracy (as error):", test_accuracy * 100)  # Convert to percentage
 # Make predictions on the test set
 y_pred = model.predict(X_test)
 
-# Ensure the results directory exists
-RESULTS_DIR = r'D:\Rishi\Data\Results\output_files'
-os.makedirs(RESULTS_DIR, exist_ok=True)
-
-# Define the output file path for the results
-output_file_path = os.path.join(RESULTS_DIR, 'model_3_result.csv')
-
-# Write DataFrame to CSV at the specified path
+# Ensure the directory exists
+os.makedirs(OUTPUT_FILES_DIR, exist_ok=True)
+output_file_path = os.path.join(OUTPUT_FILES_DIR, 'model_3_result.csv')
 df_encoded.to_csv(output_file_path, index=False)
-
-# Define the full path for comparison.csv
-comparison_file_path = os.path.join(r'D:\Rishi\Data\Results\result_files', "comparison.csv")
+comparison_file_path = os.path.join(RESULT_FILES_DIR, "comparison.csv")
 
 # Prepare the metrics for comparison.csv
 df_metrics = pd.DataFrame(columns=['Models', "Model Description", "Train error", "Val error", "Test error"])

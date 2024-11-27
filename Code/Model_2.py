@@ -6,12 +6,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
-import pickle
-from Utils.constants import RAW_DIR, file_name, RESULTS_DIR, output_file_name, processed_data_dir
 from Utils.utils import get_mean
+from Utils.constants import RAW_DIR ,RESULT_FILES_DIR, RAW_FILE_PATH, OUTPUT_FILES_DIR, LOYALTY_DISCOUNTS, BASE_FARE,PEAK_HOURS_MULTIPLIER, TRAFFIC_MULTIPLIER, PAST_RIDES_DISCOUNT, DURATION_MULTIPLIER, DURATION_THRESHOLD, HISTORICAL_COST_ADJUSTMENT_FACTOR, DISTANCE_THRESHOLD,output_file_name
 
 # Read the data
-df = data = pd.read_csv(os.path.join(RAW_DIR, file_name))
+df = data = pd.read_csv(os.path.join(RAW_DIR, RAW_FILE_PATH))
 
 # Select numerical columns for features (X) and specify the target variable (Y)
 X = data.select_dtypes(include='number').drop(columns='Historical_Cost_of_Ride', errors='ignore')
@@ -53,17 +52,14 @@ results['Predicted_Cost_of_Ride'] = Y_test_pred
 results['Error'] = results['Historical_Cost_of_Ride'] - results['Predicted_Cost_of_Ride']
 
 # Ensure the results directory exists
-RESULTS_DIR = r'D:\Rishi\Data\Results\output_files'
-os.makedirs(RESULTS_DIR, exist_ok=True)
+os.makedirs(OUTPUT_FILES_DIR, exist_ok=True)
 
 # Define the full path for the output file
-output_file_path = os.path.join(RESULTS_DIR, 'model_2_result.csv')
+output_file_path = os.path.join(OUTPUT_FILES_DIR, 'model_2_result.csv')
 
 # Save results to the specified directory
 results.to_csv(output_file_path, index=False)
 
-#  Define results directory
-RESULTS_DIR = r'D:\Rishi\Data\Results\result_files'
 # Initialize metrics DataFrame
 df_metrics = pd.DataFrame(columns=['Models', "Model Description", "Train error", "Val error", "Test error"])
 
@@ -71,7 +67,7 @@ df_metrics = pd.DataFrame(columns=['Models', "Model Description", "Train error",
 df_metrics.loc[len(df_metrics)] = ["Model 2", "All Numerical Features + Standard Scaler Introduced", train_rmse, val_rmse, test_rmse]
 
 # Check if comparison.csv already exists in RESULTS_DIR, then append; otherwise, create a new file
-comparison_file_path = os.path.join(RESULTS_DIR, "comparison.csv")
+comparison_file_path = os.path.join(RESULT_FILES_DIR, "comparison.csv")
 if os.path.exists(comparison_file_path):
     # Read existing metrics file
     df_metrics_ = pd.read_csv(comparison_file_path)

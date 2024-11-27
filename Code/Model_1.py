@@ -6,10 +6,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
-from Utils.constants import RAW_DIR, file_name, RESULTS_DIR
+from Utils.constants import RAW_DIR ,RESULT_FILES_DIR, RAW_FILE_PATH, OUTPUT_FILES_DIR, LOYALTY_DISCOUNTS, BASE_FARE,PEAK_HOURS_MULTIPLIER, TRAFFIC_MULTIPLIER, PAST_RIDES_DISCOUNT, DURATION_MULTIPLIER, DURATION_THRESHOLD, HISTORICAL_COST_ADJUSTMENT_FACTOR, DISTANCE_THRESHOLD,output_file_name
 
 # Read the data
-df = pd.read_csv(os.path.join(RAW_DIR, file_name))
+df = pd.read_csv(os.path.join(RAW_DIR, RAW_FILE_PATH))
 
 # Select numerical columns for features (X) and specify the target variable (Y)
 X = df.select_dtypes(include='number').drop(columns='Historical_Cost_of_Ride', errors='ignore')
@@ -46,8 +46,7 @@ df_metrics = pd.DataFrame(columns=['Models', "Model Description", "Train error",
 df_metrics.loc[len(df_metrics)] = ["Model 1", "All Numerical Features", train_rmse, val_rmse, test_rmse]
 
 # Save or append to comparison.csv in RESULTS_DIR
-result_files = r'D:\Rishi\Data\Results\result_files'
-comparison_file_path = os.path.join(result_files, "comparison.csv")
+comparison_file_path = os.path.join(RESULT_FILES_DIR, "comparison.csv")
 if os.path.exists(comparison_file_path):
     # Read existing metrics file
     df_existing_metrics = pd.read_csv(comparison_file_path)
@@ -66,7 +65,7 @@ results['Predicted_Cost_of_Ride'] = Y_test_pred
 results['Error'] = results['Historical_Cost_of_Ride'] - results['Predicted_Cost_of_Ride']
 
 # Ensure the output_files directory exists
-output_files_dir = os.path.join(RESULTS_DIR, 'output_files')
+output_files_dir = os.path.join(output_file_name, 'output_files')
 os.makedirs(output_files_dir, exist_ok=True)
 
 # Define the full path for the output file

@@ -4,4 +4,5 @@ Model 2,All Numerical Features + Standard Scaler Introduced,66.99122314153885,71
 Model 3,All Numerical Features + Standard Scaler Introduced + Categorical Features One Hot Encoded,70.16666666666667,68.5,62.5
 Model 4,All Numerical Features + Standard Scaler Introduced + Categorical Features One Hot Encoded + Adjusted Cost Of Ride,63.20870477878769,68.25528605373896,70.3235425018963
 Model 5,Numerical Features with Feature Engineering and Correlation-Based Selection + Standard Scaling + One-Hot Encoding for Categorical Features + Adjusted Historical Cost of Ride as Target,63.88695294394466,68.54349283485297,69.8758269792847
-Model 6,"Feature Engineering with Demand Surge, Distance Adjustments, Elasticity, and Loyalty Discounts",74.26795900704978,79.00998473947662,81.70714271405218
+Model 6,"Integrated model using XGBoost with feature engineering, correlation-based selection, and scaling for accurate fare prediction",2.6405414367988604,7.253603453662866,8.09089641093511
+Model 7,"Gradient Boosting Regressor with Log-Target, Feature Engineering",1.1647016706119442,2.117557995140618,2.1073105251543858
