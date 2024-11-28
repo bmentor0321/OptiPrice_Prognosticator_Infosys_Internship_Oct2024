@@ -27,7 +27,7 @@ df['Cost_Per_Transaction'] = df['Total_Cost'] / df['Number_of_Riders']
 # Revenue Per Transaction
 df['Revenue_Per_Transaction'] = df['Revenue'] / df['Number_of_Riders']
 
-# Features (X) and target (y)
+# Features(X) and target(y)
 X = df[['Number_of_Riders', 'Number_of_Drivers', 'Location_Category', 'Customer_Loyalty_Status', 'Number_of_Past_Rides', 'Average_Ratings', 'Time_of_Booking', 'Vehicle_Type', 'Expected_Ride_Duration', 'Revenue_Per_Minute', 'Profit_Per_Minute', 'Cost_Per_Transaction', 'Revenue_Per_Transaction']]
 y = df['Historical_Cost_of_Ride']
 
@@ -76,4 +76,4 @@ output_df = pd.DataFrame({
 
 # Save to CSV
 output_df.to_csv('Model_4_Errors.csv', index=False)
-print("Output saved to 'Model_4_Errors.csv'")
+print("Output saved in 'Model_4_Errors.csv'")
