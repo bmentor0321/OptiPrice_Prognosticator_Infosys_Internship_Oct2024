@@ -1,0 +1,5 @@
+Model,Model Description,Train error,Val error,Test error
+Model1,All numerical features,1.01E-26,1.20E-26,1.01E-26
+Model2,All numerical features with normalisation,1.01E-26,1.20E-26,1.01E-26
+Model3,All categorical values+numerical values,6051.160536,7430.52085,6702.272693
+Model4,Feature engineering,152.6799786,142.3506217,230.7762077
