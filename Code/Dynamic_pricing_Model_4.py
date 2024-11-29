@@ -42,7 +42,8 @@ transformer= ColumnTransformer(transformers=[
         ('vehicle', OrdinalEncoder(categories=[vehicle_type_order]), ['Vehicle_Type']),
         
         # Apply StandardScaler for Numerical columns
-        ('scaler', StandardScaler(), ['Number_of_Riders', 'Number_of_Drivers','Average_Ratings','Number_of_Past_Rides','Expected_Ride_Duration'])
+        ('scaler', StandardScaler(), ['Number_of_Riders', 'Number_of_Drivers','Average_Ratings',
+                                      'Number_of_Past_Rides','Expected_Ride_Duration'])
     ],
     remainder='passthrough'
 )
@@ -77,7 +78,6 @@ y_train_pred_rf = rf.predict(X_train_pca)
 train_rmse = np.sqrt(mean_squared_error(y_train,y_train_pred_rf))
 train_r2 = r2_score(y_train,y_train_pred_rf)
 print("Error of RandomForest Regression Model on train Data = ",train_rmse)
-#print("Accuracy of RandomForest Regression Model on train Data = ", 1 - train_rmse)
 print("R2 score of RandomForest Regression on train Data = %.2f"%(train_r2))
 
 # 2. Model evaluation on validation Data
@@ -85,7 +85,6 @@ y_val_pred_rf = rf.predict(X_val_pca)
 val_rmse = np.sqrt(mean_squared_error(y_val,y_val_pred_rf))
 val_r2 = r2_score(y_val,y_val_pred_rf)
 print("Error of RandomForest Regression Model on validation Data = ", val_rmse)
-#print("Accuracy of RandomForest Regression Model on validation Data = ",(1 - val_rmse))
 print("R2 score of RandomForest Regression on validation Data = %.2f"%(val_r2))
 
 
@@ -112,7 +111,6 @@ y_train_pred_lr = lr.predict(X_train_pca)
 train_rmse_lr = np.sqrt(mean_squared_error(y_train,y_train_pred_lr))
 train_r2_lr = r2_score(y_train,y_train_pred_lr)
 print("Error of Linear Regression Model on Training Data  = ",train_rmse_lr)
-#print("Accuracy of Linear Regression Model on Training Data = %.2f"%((1 - train_mape_lr)*100),'%')
 print("R2 score of Linear Regression on Training Data = %.2f"%(train_r2_lr))
 
 # 2. Model evaluation on validation Data
@@ -120,7 +118,6 @@ y_val_pred_lr = lr.predict(X_val_pca)
 val_rmse_lr = np.sqrt(mean_squared_error(y_val,y_val_pred_lr))
 val_r2_lr = r2_score(y_val,y_val_pred_lr)
 print("Error of Linear Regression Model = ", val_rmse_lr)
-#print("Accuracy of Linear Regression Model = %.2f"%((1 - val_rmse_lr)*100),'%')
 print("R2 score of Linear Regression = %.2f"%(val_r2_lr))
 
 
@@ -147,5 +144,5 @@ df_matrics =pd.DataFrame(columns=['Model','Model_Description','Train_Error','Val
 df_matrics.loc[len(df_matrics)]=['Model_4 (Random Forest)','Using all columns (Scaling and Encoding) + PCA',train_rmse,val_rmse,test_rmse]
 df_matrics.loc[len(df_matrics)]=['Model_4 (Linear Regression)','Using all columns (Scaling and Encoding) + PCA',train_rmse_lr, val_rmse_lr, test_rmse_lr]
 
-output_file = os.path.join(RESULTS_DIR, "model_result_matrics.csv")
+output_file = os.path.join(RESULTS_DIR, "models_result_matrics.csv")
 df_matrics.to_csv(output_file, mode='a', header=not os.path.exists(output_file), index=False)

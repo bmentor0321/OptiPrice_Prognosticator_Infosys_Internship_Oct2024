@@ -13,5 +13,3 @@ RESULTS_DIR = os.path.join(DATA_DIR,"Results")
 demand_supply_threshold = 2.3
 constant_rate = 3.5  # Define the base rate per unit of duration, this is arround mean of ratio of ('Historical_Cost_of_Ride'/'Expected_Ride_Duration')
 demand_hike = 0.35  # This is how much demand increase the pricing
-
-

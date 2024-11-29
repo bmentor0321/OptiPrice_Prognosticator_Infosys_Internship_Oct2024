@@ -1,0 +1,11 @@
+Model,Model_Description,Train_Error,Val_Error,Test_Error
+Model_1 (Random Forest),Using only numerics columns,27.908293066304775,73.49306986914459,77.2762520444507
+Model_1 (Linear Regression),Using only numerics columns,69.16857931727536,67.61782955713178,72.21706973355127
+Model_2 (Random Forest),Using only numerics columns and applying Standard Scaling,28.38971822681365,73.21561356275082,76.97801849740821
+Model_2 (Linear Regression),Using only numerics columns and applying Standard Scaling,69.16857931727536,67.61782955713183,72.21706973355126
+Model_3 (Random Forest),Using numerics + categorical columns (applying Scaling and Encoding),26.795770033746198,68.50697601943652,73.47039689375497
+Model_3 (Linear Regression),Using numerics + categorical columns (applying Scaling and Encoding),65.68751311140268,65.30316000864758,66.91950678432468
+Model_4 (Random Forest),Using all columns (Scaling and Encoding) + PCA,27.893217921720808,71.94760954881997,82.15553212397401
+Model_4 (Linear Regression),Using all columns (Scaling and Encoding) + PCA,65.68024217417289,64.69522349699832,67.58166966666474
+Model_5 (Random Forest),Using numerics and categoricals columns + Feature Engineering ,15.004216467675178,39.95071457076662,40.711635728524016
+Model_5 (Linear Regression),Using numerics and categoricals columns + Feature Engineering,185.09383359633767,168.45882923724744,167.13427608049528
