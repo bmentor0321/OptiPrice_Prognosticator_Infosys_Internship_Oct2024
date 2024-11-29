@@ -16,7 +16,7 @@ from sklearn.preprocessing import MinMaxScaler
 import joblib
 file_path = os.path.join(RAW_DIR, "dynamic_pricing.csv")
 
-# Load the dataset
+# Load the dataset from constants floder
 df = pd.read_csv(file_path)
 df
 
