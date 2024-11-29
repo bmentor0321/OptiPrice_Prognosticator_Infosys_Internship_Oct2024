@@ -5,7 +5,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error
 import numpy as np
 
 # Load the data from the specified file path
-file_path = r"C:\Users\chide\OneDrive\Desktop\infosys\dynamic_pricing.csv"
+file_path = r"C:\Users\admin\OneDrive\Desktop\infosys\dynamic_pricing.csv"
 data = pd.read_csv(file_path, encoding='utf-8')
 
 # Separate the target variable (Y) and features (X)
@@ -44,7 +44,7 @@ test_results['Y_Predicted'] = y_test_pred
 test_results['Error'] = test_errors
 
 # Save the test dataset with Y actual, Y predicted, and error into a CSV file
-output_path = r"C:\Users\chide\OneDrive\Desktop\infosys\test_results_with_errors.csv"
+output_path = r"C:\Users\admin\OneDrive\Desktop\infosys\test_results_with_errors.csv"
 test_results.to_csv(output_path, index=False)
 
 # Display validation and test error metrics
