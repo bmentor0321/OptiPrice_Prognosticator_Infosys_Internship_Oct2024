@@ -1,0 +1,3 @@
+﻿Model Performance Summary,,,,
+Model,   Model Description,Train error,Val error, Test error
+Model 1 ,All numerical features,0.8,0.2,0.4
