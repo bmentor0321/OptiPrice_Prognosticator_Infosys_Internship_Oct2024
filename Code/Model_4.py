@@ -69,5 +69,5 @@ results['Y_True'] = y_test
 results['Y_Predicted'] = y_test_pred
 results['Error'] = error
 
-results.to_csv('C:/Users/viroc/Documents/Infosys Springboard Internship/Project/OptiPrice_Prognosticator_Infosys_Internship_Oct2024/Dataset/Model_4_test_results_with_error.csv', index=False)
+results.to_csv('C:/Users/viroc/Documents/Infosys Springboard Internship/Project/OptiPrice_Prognosticator_Infosys_Internship_Oct2024/Dataset/model_4_test_results_with_error.csv', index=False)
 print("Test results with predictions and error saved to 'Model_4_test_results_with_error.csv'")
