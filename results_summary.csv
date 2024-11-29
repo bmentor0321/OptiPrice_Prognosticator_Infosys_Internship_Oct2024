@@ -1,0 +1,7 @@
+Model_Name,Model_Summary,Train_Error,Val_Error,Test_Error
+LR,Basic linear regression with numerical features only,67.87797537165976,73.50877429328743,72.52566684395164
+LR+SD,Linear regression with standard scaling,67.87797537165976,73.50877429328744,72.52566684395163
+LR+OneHot+SD,Linear regression with one-hot encoding and standard scaling,64.94431507491285,68.90928653809979,68.38826113466713
+LR+OneHot+SD+PCA,Linear regression with PCA transformation,64.54405337136086,69.30562593001628,68.24022892274634
+LR+OneHot+SD+Dynamic,Linear regression with dynamic pricing based on demand-supply patterns,82.76057767738072,96.33435225558898,84.84631838763084
+LR+FE+Metrics,Linear regression with comprehensive feature engineering,938.039978686036,766.7163849872363,981.6472383291375
