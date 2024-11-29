@@ -12,7 +12,7 @@ import constants as C  # Import constants from the constants.py file
 
 # Load dataset using the path from constants.py
 data = pd.read_csv(C.RAW_DATA_PATH)
-
+#start 
 # First feature: Supply-Demand Ratio
 data['Supply_Demand_Ratio'] = data['Number_of_Drivers'] / data['Number_of_Riders']
 
@@ -102,6 +102,7 @@ results = pd.DataFrame({
 # Displaying the results in a clean format
 print("\nModel Performance Summary:\n")
 print(results.to_string(index=False))
+#end
 
 # Save results using the processed data path from constants.py
 os.makedirs(C.PROCESSED_DATA_DIR, exist_ok=True)

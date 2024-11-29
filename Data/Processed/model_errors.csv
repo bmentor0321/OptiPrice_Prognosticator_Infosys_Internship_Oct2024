@@ -1,0 +1,2 @@
+Model,Model_Description,Train_Error,Val_Error,Test_Error
+Model_1 (Linear Regression),Using numeric and categorical columns with PCA,65.20873066815531,69.30252283374064,66.19836511156012

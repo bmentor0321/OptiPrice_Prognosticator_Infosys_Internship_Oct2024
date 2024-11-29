@@ -1,0 +1,17 @@
+feature,importance
+Expected_Ride_Duration,0.8031917
+Supply_Demand_Ratio,0.06248533
+Vehicle_Type_Premium,0.06013859
+Customer_Value_Score,0.018737826
+Number_of_Drivers,0.01806893
+Number_of_Riders,0.015132906
+Average_Ratings,0.0123483995
+Time_Based_Demand_Multiplier,0.009896305
+Number_of_Past_Rides,0.0
+Location_Category_Suburban,0.0
+Customer_Loyalty_Status_Regular,0.0
+Location_Category_Urban,0.0
+Customer_Loyalty_Status_Silver,0.0
+Time_of_Booking_Evening,0.0
+Time_of_Booking_Morning,0.0
+Time_of_Booking_Night,0.0
