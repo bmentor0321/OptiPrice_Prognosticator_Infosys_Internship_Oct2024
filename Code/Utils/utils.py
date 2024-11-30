@@ -9,7 +9,6 @@ def get_mean(df, column):
     mean (float): desc
 
     """
-    
     all_columns = list(df.columns)
     # assert column in all_columns
     try:
